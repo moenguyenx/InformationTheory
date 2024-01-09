@@ -1,6 +1,7 @@
 from heapq import heappush, heappop, heapify
 from collections import defaultdict
 from bitarray import bitarray
+import math
 
 def build_huffman_tree(freq_lib):
     """
@@ -62,15 +63,53 @@ def huffman_decode(encoded_text, huffman_dict):
     decoded_text = ''.join(decoded_text)
     return decoded_text
 
+def calculate_entropy(freq_lib, total_symbols):
+    """
+    Calculate entropy of input 
+
+    Parameters: 
+        freq_lib: A dictionary containing the frequency of each symbol.
+        total_symbols: Total of symbols in input text
+
+    Returns:
+        entropy = - Σ p(Xi)* log2(p(Xi))
+    """
+    entropy = 0
+    for fq in freq_lib.values():
+        probability = fq / total_symbols
+        entropy -= probability * math.log2(probability)
+
+    return entropy
+
+def calculate_compression_ratio(text, encoded_text):
+    """
+    Calculate compression ratio.
+
+    Parameters:
+        text (str): Original input text.
+        encoded_text (bitarray): Encoded message.
+
+    Returns:
+        float: Compression ratio (Kt).
+    """
+    original_size = len(text) * 8  # Assuming 8 bits per character
+    compressed_size = len(encoded_text)
+
+    compression_ratio = original_size / compressed_size
+    return compression_ratio
+
+
 def huffman_main_func():
     """
     Main function to take user input, perform Huffman encoding and decoding, and print the results.
     """
     # Input data to be compressed
     text = input("Input message: ")
+    total_symbols = len(text)
 
     # Create a library with frequency of each symbols
     freq_lib = defaultdict(int)
+
     for ch in text:
         freq_lib[ch] += 1
 
@@ -81,7 +120,13 @@ def huffman_main_func():
     encoded_text = huffman_encode(text, huffman_dict)
     print("Encoded message:", encoded_text)
 
+    print(f"Entropy: {calculate_entropy(freq_lib, total_symbols)}")
+    
+    print(f"Compression ratio: {calculate_compression_ratio(text, encoded_text)}")
+
     # Decoding
     decoded_text = huffman_decode(encoded_text, huffman_dict)
     print("Decoded message:", decoded_text)
+
+
 

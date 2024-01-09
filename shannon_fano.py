@@ -1,3 +1,5 @@
+import math
+
 class Compress:
     # Compress class for storing different parameters of a character
     def __init__(self, char):
@@ -103,6 +105,11 @@ def shannon_fano_main_func():
 
     # Compress the user input
     compressed_data = compressor.compress_data(user_input)
+    entropy = 0
+
+    for i in compressed_data:
+        entropy -= i.probability* math.log2(i.probability)
+    print(f"Entropy: {entropy}")
 
     # Display the compressed data
     for i in compressed_data:
